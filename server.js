@@ -1,6 +1,7 @@
 import express from 'express'
 import mongoose from 'mongoose'
 import Messages from './dbMessages.js'
+import cors from 'cors'
 import Pusher from "pusher"
 const port = process.env.PORT || 9000;
 
@@ -30,18 +31,18 @@ db.once('open',()=>{
             pusher.trigger('messages','inserted',{
                 name:messageDetails.name,
                 message:messageDetails.message,
+                timestamp:messageDetails.timestamp,
+                received:messageDetails.received,
             });
         }else{
             console.log("error triggering")
         }
     })
 })
-app.use(express.json())
-app.use((req,res,next)=>{
-res.setHeader("Access-Control-Allow-Origin","*");
-res.setHeader("Access-Control-Allow-Headers","*");
-next(); 
-});
+app.use(express.json());
+app.use(cors());
+
+
 app.get('/',(req,res)=>{
 res.status(200).send('hello world')
 });
